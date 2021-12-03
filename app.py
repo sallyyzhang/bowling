@@ -92,7 +92,13 @@ def post_frame():
     game_player = GamePlayer.query.filter_by(game_id=gameid, player_name=name).first()
     if game_player is None:
         return failure_response("playerNotFound", 406)
-    game_player.score = score
+
+    frames = Frame.query.filter_by(gamePlayerid=game_player.id).all()
+    playerScore = 0
+    for frame in frames:
+        if frame.score > playerScore:
+            playerScore = frame.score
+    game_player.score = playerScore
     frame = Frame.query.filter_by(gamePlayerid=game_player.id, frameName=framename).first()
 
     if frame is None:
